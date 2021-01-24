@@ -1,8 +1,8 @@
-# demo-kafka-spring-boot-basic-with-config
+# demo-elk-log-basic
 
-This project represents a basic example of working with **Kafka** and configuration classes
+This project represents a basic example of working with **logs** 
 
-Send and receive "Hello World! "+new Date() message
+Generate different log messages types (random)
 
 This projects stands out for:
 
@@ -13,8 +13,7 @@ This projects stands out for:
 
 * Java 8
 * [Maven 3](https://maven.apache.org/) - Dependency Management
-* [Apache Kafka ](https://kafka.apache.org/) 2.11-1.1.1
-* [Spring Boot](https://spring.io/projects/spring-boot) 2.0.0.RELEASE
+* [Spring Boot](https://spring.io/projects/spring-boot) 2.3.4.RELEASE
 * [Spring](https://spring.io)
  
 
@@ -24,10 +23,9 @@ N/A
 
 Third Party Dependencies
 
-* **spring-boot-starter** [2.0.0.RELEASE] : Spring Boot + Spring Framework 
-* **spring-kafka** [2.1.4.RELEASE] : Spring - Kafka Integration
-* **spring-boot-starter-test** [2.0.0.RELEASE] : Spring Boot testing library
-* **spring-kafka-test** [2.0.0.RELEASE] : Kafka testing library with Spring Framework
+* **spring-boot-starter** [2.3.4.RELEASE] : Spring Boot + Spring Framework 
+* **spring-boot-starter-test** [Spring Boot Version] : Spring Boot testing library
+
 
 ## Prerequisites
 
@@ -35,19 +33,10 @@ Define what elements are needed to install the software
 
 * Java 8 installed (1.5+ version required)
 * Maven installed  (3+)
-* Kafka infraestructure + Topics
 
-## Apache Kafka Configuration
 
-* Installation and Configuration : Apache Kafka (Document **doc/README-installation-configuration-kafka**)
 
-* Create topics :
 
-```bash
-kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic topic-1
-
-kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic topic-2
-```
 
 ## Installation
 
@@ -65,18 +54,34 @@ mvn clean install
 
 The result will be the generation of an artifact in your maven repository
 
+
+
+
+
 ## Testing
 
 This project has tests
+
+
+
+
 
 ## Deploy
 
 N/A
 
+
+
+
+
 ## Versioning
 
 **Note :** [SemVer](http://semver.org/) is used for the versioning. 
 To see the available versions access the repository tags
+
+
+
+
 
 ## Authors
 

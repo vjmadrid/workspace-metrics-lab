@@ -4,17 +4,17 @@ import static com.acme.metrics.elk.constant.MessageConstant.*;
 
 import java.util.Random;
 
-public enum MessageUtil {
+public final class GenerateMessageUtil {
 
-    INSTANCE;
+	private GenerateMessageUtil() {
+		throw new IllegalStateException("GenerateMessageUtil");
+	}
 
-    private int generateRandomIndex(int maxValue) {
-
-        Random random = new Random();
-        return random.nextInt(maxValue);
+    private static int generateRandomIndex(int maxValue) {
+        return new Random().nextInt(maxValue);
     }
 
-    public String getMessage() {
+    public static String getMessage() {
 
         final StringBuilder msg = new StringBuilder();
         final int logTypeIndex = generateRandomIndex(LOG_TYPE.length);
