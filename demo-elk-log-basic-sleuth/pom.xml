@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.acme.metrics.elk</groupId>
+    <artifactId>demo-elk-log-basic-sleuth</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+	
+    <properties>
+   
+    	<!-- Compiler & Resources -->
+        <java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- Dependency Versions -->
+		<spring-boot.version>2.3.4.RELEASE</spring-boot.version>
+		<spring-cloud.version>Hoxton.SR9</spring-cloud.version>
+		
+		<lombok.version>1.18.16</lombok.version>
+		<logstash-logback-encoder.version>6.6</logstash-logback-encoder.version>
+		
+		<dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
+		<docker.image.prefix>acme</docker.image.prefix>
+		
+    </properties>
+    
+     <dependencyManagement>
+     
+        <dependencies>
+        
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+        
+    </dependencyManagement>
+
+    <dependencies>
+    
+    	<!-- *** Architecture Libraries *** -->
+		
+		<!-- *** Spring Boot Starters *** -->
+		
+		<!-- spring-boot-starter-test : Testing for Spring Framework
+				- Set of libraries for testing : Junit, Mockito, Hamcrest, AssertJ, JSONassert and JsonPath
+		-->
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+		
+			<!-- Exclude Support JUnit4 -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		
+		</dependency>
+		
+		
+		<!-- spring-boot-starter-web : Web Spring Famework for use Spring MVC with web / RESTful applications-->
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+		<!-- spring-boot-devtools : To reload the code when changes made -->
+		
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
+        <!-- spring-cloud-starter -->
+        
+        <dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-starter</artifactId>
+		</dependency>
+        
+        <!-- spring-cloud-starter-sleuth -->
+        
+        <dependency>
+        	<groupId>org.springframework.cloud</groupId>
+       		<artifactId>spring-cloud-starter-sleuth</artifactId>
+    	</dependency>
+        
+        <!-- *** Third Party Libraries *** -->
+        
+        <!-- lombok : Java Tool for automatic generation of getters, setters, equals, hashCode, toString, more -->
+        
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        
+        <!-- logstash-logback-encoder : output events as Logstash-compatible JSON  -->
+        
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
+        </dependency>
+
+        
+    </dependencies>
+
+    <build>
+    
+        <plugins>
+        	
+        	<!-- spring-boot-maven-plugin : Plugin used to work with Spring Boot application -->
+        	
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            
+            <!-- maven-compiler-plugin : Plugin used to compile the project source -->
+            
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			
+			<!-- maven-dependency-plugin -->
+			
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- maven-surefire-plugin : Plugin used to run unit tests - Generate reports in the directory target/surefire-reports -->
+			
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>${skip.unit.tests}</skipTests>
+					<testFailureIgnore>false</testFailureIgnore>
+					<properties>
+						<configurationParameters>
+							junit.jupiter.execution.parallel.enabled=true
+							junit.jupiter.execution.parallel.config.dynamic.factor=2
+							junit.platform.output.capture.stdout=true
+							junit.platform.output.capture.stderr=true
+						</configurationParameters>
+					</properties>
+				</configuration>
+			</plugin>
+			
+			<!-- maven-failsafe-plugin : Plugin used to run integration tests -->
+			
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<skipITs>${skip.integration.tests}</skipITs>
+					<includes>
+						<include>**/*TestIT</include>
+						<include>**/*TestITCase</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Dockerfile from Spotify -->
+            
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile-maven-plugin.version}</version>
+                <configuration>
+                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        
+        </plugins>
+    </build>
+
+</project>

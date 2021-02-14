@@ -1,0 +1,9 @@
+# *** Configuration SERVER ***
+server:
+   port: ${PORT:8091}
+   
+# *** LOGGING ***
+logstash:
+   host: logstash:5000
+logger:
+   name: com.acme.metrics.elk

@@ -1,6 +1,12 @@
 package com.acme.metrics.elk.constant;
 
-public final class MessageConstant {
+public final class GenerateLogConstant {
+	
+	private GenerateLogConstant() {
+		
+	}
+	
+	public static final int NUM_MESSAGES= 100;
 
     public static final String[] LOG_TYPE = {"CREATE", "UPDATE", "DELETE"};
 

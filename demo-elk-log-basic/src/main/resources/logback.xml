@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	
+	<property name="LOG_EXTENSION" value="log" />
+	<property name="LOG_DIR" value="logs" />
+	<property name="LOG_FILE_NAME" value="demo" />
+	
+	<springProperty name="LOGSTASH_HOST" source="logstash.host"/>
+    <springProperty name="LOGGER_NAME" source="logger.name"/>
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+    		<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    	</encoder>
+  	</appender>
+  	
+  	<appender name="STDOUT_2" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+    		<charset>UTF-8</charset>
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [${HOSTNAME}] [%thread] %level %logger{36}@%method:%line - %msg%n</pattern>
+    	</encoder>
+  	</appender>
+  	
+  	<appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${LOG_FILE_NAME}.${LOG_EXTENSION}</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_DIR}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i.${LOG_EXTENSION}</fileNamePattern>
+			<maxHistory>7</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>5MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    
+    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOGSTASH_HOST}</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+ 
+	<logger name="com.acme.metrics.elk" level="INFO" />
+    <logger name="org.springframework" level="INFO" />
+   
+    <logger name="${LOGGER_NAME}" level="${LOGGER_LEVEL:-DEBUG}" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILEROLLING" />
+        <appender-ref ref="STASH" />
+    </logger>
+   
+   	<root level="${ROOT_LEVEL:-WARN}">
+        <appender-ref ref="STDOUT" />
+    </root>
+    
+   	<!-- 
+	<root level="INFO">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILE_INFO" />
+	</root>
+	 -->
+
+</configuration>

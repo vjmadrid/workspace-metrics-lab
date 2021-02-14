@@ -1,0 +1,4 @@
+# *** Configuration SERVER ***
+server:
+   port: ${PORT:8091}
+ 
